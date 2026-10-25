@@ -1,0 +1,28 @@
+@namespace html url("http://www.w3.org/1999/xhtml");
+
+#easyread-sync-preferences groupbox {
+  margin-block: 0 1.2em;
+}
+
+#easyread-sync-preferences hbox {
+  margin-block: .65em;
+  gap: .8em;
+}
+
+#easyread-sync-preferences hbox > html|input {
+  flex: 1;
+  min-width: 0;
+}
+
+#easyread-sync-preferences hbox > label {
+  min-width: 8em;
+}
+
+#easyread-sync-preferences checkbox {
+  margin-block: .45em;
+}
+
+#easyread-sync-preferences .easyread-sync-detail {
+  margin-inline-start: 1.8em;
+  opacity: .8;
+}

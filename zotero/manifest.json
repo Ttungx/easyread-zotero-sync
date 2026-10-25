@@ -1,0 +1,13 @@
+{
+  "manifest_version": 2,
+  "name": "EasyRead Sync",
+  "version": "0.2.1",
+  "description": "将 EasyRead 已完成的全文译文同步为 Zotero 内可离线阅读的 HTML 附件。",
+  "author": "apple5089",
+  "applications": {"zotero": {
+    "id": "easyread-zotero-sync@local.research",
+    "update_url": "https://raw.githubusercontent.com/apple5089/zotero-easyread/main/updates.json",
+    "strict_min_version": "10.0",
+    "strict_max_version": "10.0.*"
+  }}
+}

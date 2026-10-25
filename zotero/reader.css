@@ -1,0 +1,73 @@
+/* SPDX-License-Identifier: MIT -- Script-free reading styles; Zotero owns navigation, search and annotations. */
+:root {
+  color-scheme: light dark;
+  --paper: #fff;
+  --ink: #25231f;
+  --muted: #66615a;
+  --rule: #dcd8d0;
+  --accent: #2d6173;
+  --soft: #f5f3ef;
+  font-family: "Noto Serif SC", "Source Han Serif SC", "Songti SC", "STSong", serif;
+  -webkit-text-size-adjust: 100%;
+}
+* { box-sizing: border-box; }
+html { scroll-padding-top: 1rem; }
+body { margin: 0; background: var(--paper); color: var(--ink); }
+#paper { width: 100%; max-width: 46rem; margin: 0 auto; padding: 24px 18px 56px; font-size: 18px; line-height: 1.85; overflow-wrap: anywhere; }
+h1, h2, h3, h4, h5, h6 { line-height: 1.5; text-align: left; text-wrap: pretty; }
+h1 { font-size: 1.4em; margin: 0 0 1em; }
+h2 { font-size: 1.25em; margin: 1.9em 0 .7em; }
+h3, h4, h5, h6 { font-size: 1.1em; margin: 1.5em 0 .6em; }
+.section-number { color: var(--muted); font-weight: normal; }
+.block { margin: 0 0 1em; }
+.block-para { text-align: justify; }
+.block p { margin: 0 0 .7em; }
+.byline { color: var(--muted); font-size: .85em; }
+ul, ol { padding-left: 1.5em; }
+li { margin: .3em 0; }
+a { color: var(--accent); text-decoration-thickness: 1px; text-underline-offset: .15em; }
+a.cite, a.xref { text-decoration: none; border-bottom: 1px dotted var(--accent); }
+a:focus-visible, summary:focus-visible, .table-scroll:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+nav { margin: 1.3em 0 2em; padding: .6em .8em; border: 1px solid var(--rule); border-radius: .5em; font-size: .9em; }
+nav summary { cursor: pointer; font-weight: bold; }
+nav ol { list-style: none; padding-left: .3em; margin-bottom: .4em; }
+nav li { line-height: 1.6; margin: .5em 0; }
+nav .toc-level-2 { margin-left: 1em; }
+nav .toc-level-3, nav .toc-level-4, nav .toc-level-5, nav .toc-level-6 { margin-left: 2em; }
+figure { margin: 1.5em 0; }
+img { display: block; max-width: 100%; height: auto; margin: 0 auto; }
+figcaption { font-size: .86em; line-height: 1.7; color: var(--muted); margin: .8em auto; text-align: center; }
+.figure-text { margin: .8em 0; padding: .6em .8em; font-size: .86em; line-height: 1.7; border-left: 2px solid var(--accent); background: var(--soft); }
+.figure-text > span { display: block; font: .8em/1.6 system-ui, sans-serif; color: var(--accent); }
+.table-scroll { max-width: 100%; overflow-x: auto; overscroll-behavior-x: contain; scrollbar-width: thin; }
+table { border-collapse: collapse; margin: .5em auto; border-top: 1.5px solid var(--ink); border-bottom: 1.5px solid var(--ink); font-size: .86em; line-height: 1.5; font-variant-numeric: tabular-nums; }
+th, td { padding: .5em .7em; text-align: left; vertical-align: top; white-space: nowrap; }
+th { border-bottom: 1px solid var(--muted); }
+.math-row { display: flex; align-items: center; gap: .6em; }
+.math-body { flex: 1; min-width: 0; overflow-x: auto; overflow-y: hidden; padding: .35em 0; text-align: center; scrollbar-width: thin; }
+.math-tag { flex: none; font-size: .86em; color: var(--muted); }
+/* Keep KaTeX's absolute MathML nodes inside their scroll container. */
+.katex { position: relative; font-size: 1.05em; }
+.katex-display { margin: .4em 0; }
+.paragraph > .katex { overflow-wrap: normal; }
+.eq { max-width: 100%; overflow-x: auto; overflow-y: hidden; }
+.references { list-style: none; padding: 0; font-size: .8em; line-height: 1.65; }
+.references li { display: grid; grid-template-columns: 2.6em minmax(0,1fr); margin: 0 0 .8em; }
+.reference-number { color: var(--muted); }
+code { font: .86em/1.6 ui-monospace, Consolas, monospace; background: var(--soft); padding: .1em .2em; border-radius: 3px; }
+pre { max-width: 100%; overflow-x: auto; padding: .8em; background: var(--soft); }
+pre code { display: block; white-space: pre; }
+blockquote { margin: .7em 0; padding-left: 1em; border-left: 2px solid var(--rule); }
+@media (min-width: 760px) { #paper { padding: 40px 32px 80px; font-size: 20px; } }
+@media (prefers-color-scheme: dark) {
+  :root { --paper: #1c1b19; --ink: #dedbd4; --muted: #b7b1a7; --rule: #49443c; --accent: #9ac7d6; --soft: #292722; }
+  img { background: #fff; border-radius: 2px; }
+}
+@media print {
+  :root { --paper: #fff; --ink: #000; --muted: #444; --rule: #aaa; --accent: #222; --soft: #eee; }
+  #paper { max-width: none; font-size: 11pt; padding: 0; }
+  nav { display: none; }
+  figure, .math-row, tr { break-inside: avoid; }
+  img { max-height: 90vh; object-fit: contain; }
+  .table-scroll, .math-body { overflow: visible; }
+}

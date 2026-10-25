@@ -1,0 +1,30 @@
+<vbox xmlns:html="http://www.w3.org/1999/xhtml" id="easyread-sync-preferences" class="main-section">
+  <groupbox aria-label="EasyRead 连接">
+    <label><html:h2>EasyRead 连接</html:h2></label>
+    <description>配置本机 EasyRead 服务。连接仅限本机地址，不会向远程服务器发送文献。</description>
+    <hbox align="center">
+      <label value="EasyRead.exe" control="easyread-sync-executable"/>
+      <html:input id="easyread-sync-executable" type="text" flex="1"/>
+    </hbox>
+    <hbox align="center">
+      <label value="数据目录" control="easyread-sync-home"/>
+      <html:input id="easyread-sync-home" type="text" flex="1"/>
+    </hbox>
+    <hbox align="center">
+      <label value="服务地址" control="easyread-sync-server-url"/>
+      <html:input id="easyread-sync-server-url" type="text" placeholder="自动发现" flex="1"/>
+    </hbox>
+    <description class="easyread-sync-detail">数据目录应包含 .server.json。服务地址留空时自动发现；手动填写仅接受 http://127.0.0.1:端口。</description>
+  </groupbox>
+
+  <groupbox aria-label="操作选项">
+    <label><html:h2>操作选项</html:h2></label>
+    <checkbox id="easyread-sync-translate" label="单篇首次发送时自动开始翻译"/>
+    <checkbox id="easyread-sync-include-ai" label="同步保存到页边的 AI 回答"/>
+    <checkbox id="easyread-sync-english-context" label="在摘录下附上对应段落英文"/>
+    <description class="easyread-sync-detail">批量发送不会自动翻译。翻译内容同步仅包含已完成的全文，不包含阅读笔记或聊天记录。</description>
+  </groupbox>
+
+  <description id="easyread-sync-status" role="status"/>
+
+</vbox>
