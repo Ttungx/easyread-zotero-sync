@@ -42,4 +42,5 @@ Each run installs the release XPI (identity metadata adjusted, harness appended)
 
 ## Limits
 
+
 Desktop baseline: Zotero 10.0.6. Export baseline: EasyRead 1.4.3 / API v1, additionally exercised live on 1.4.4. iOS, other desktop versions and long-document performance are unverified. The private export endpoint can change; incompatible output leaves the existing attachment untouched. Browser tests are not Android application tests.

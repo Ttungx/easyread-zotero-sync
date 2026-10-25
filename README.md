@@ -41,7 +41,7 @@
 - 每次覆写前保留上一份 HTML 到 Profile 下的 `easyread-zotero-sync-backups/`，每个附件只保留一份，不进入云盘。
 - 附件处于同步冲突、待下载或 Zotero 正在同步时，不覆写。
 
-插件标识为 `easyread-zotero-sync@local.research`，使用独立的偏好、协议和 `easyread-zotero-sync.json` 注册表，不改原插件数据。卸载插件不会删除已导入的附件。清单中的更新源借用原插件仓库的空 `updates.json`，仅满足安装元数据要求，不是自动更新通道。
+插件标识为 `easyread-zotero-sync@local.research`，使用独立的偏好、协议和 `easyread-zotero-sync.json` 注册表，不改原插件数据。卸载插件不会删除已导入的附件。更新清单为仓库根目录的 `updates.json`。
 
 ## 开发
 

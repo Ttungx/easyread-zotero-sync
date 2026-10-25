@@ -23,7 +23,7 @@ def build(out=None):
     with zipfile.ZipFile(source, "w", zipfile.ZIP_DEFLATED) as archive:
         for name in ["README.md", "README.en.md", "VALIDATION.md", "LICENSE", "build.py"]:
             archive.write(ROOT / name, name)
-        for folder in ["zotero", "tests", "desktop", "docs", ".github"]:
+        for folder in ["zotero", "tests", "desktop", ".github"]:
             for path in sorted((ROOT / folder).rglob("*")):
                 if path.is_file() and "__pycache__" not in path.parts:
                     archive.write(path, path.relative_to(ROOT).as_posix())

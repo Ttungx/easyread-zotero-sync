@@ -34,7 +34,7 @@ The plugin reuses the original plugin's configured directory and executable path
 - One previous HTML copy is kept locally under `easyread-zotero-sync-backups/` before each overwrite.
 - Attachments pending download, in conflict, or during an active Zotero sync are never overwritten.
 
-The plugin has its own ID, preferences, protocol and `easyread-zotero-sync.json` registry; the original extension's data is untouched. Uninstalling does not delete imported attachments. The manifest's update feed is the original repository's empty `updates.json`, present only to satisfy Zotero's metadata requirements.
+The plugin has its own ID, preferences, protocol and `easyread-zotero-sync.json` registry; the original extension's data is untouched. Uninstalling does not delete imported attachments. The update feed is `updates.json` at the repository root.
 
 ## Development
 

@@ -16,3 +16,5 @@ __pycache__/
 # Private agent configuration and instructions
 .pi/
 AGENTS.md
+# Project-internal implementation plan
+docs/
