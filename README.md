@@ -1,6 +1,10 @@
 # EasyRead Sync
 
-将 EasyRead 已完成全文翻译的论文同步为 Zotero 的 `EasyRead翻译` 附件，在电脑与 Android 的 Zotero 内离线阅读。基于 [zotero-easyread](https://github.com/apple5089/zotero-easyread) 的独立插件，不修改原插件或 EasyRead 安装程序。
+在手机上阅读论文的中文翻译：插件把 EasyRead 已完成全文翻译的论文同步为 Zotero 的 `EasyRead翻译` 附件，随 Zotero 文件同步进入 Android 手机，在官方客户端内直接离线阅读。
+
+![Android Zotero 内阅读翻译版论文](assets/android-reader.png)
+
+本插件基于 [zotero-easyread](https://github.com/apple5089/zotero-easyread) 开发，是独立插件，不修改原插件或 EasyRead 安装程序。
 
 ## 功能
 
@@ -8,7 +12,7 @@
 - 输出无脚本的静态 HTML：译文、公式（KaTeX）、表格、插图和参考文献。不混入聊天记录、阅读批注或阅读进度。
 - 首次同步创建存储附件并加 `EasyRead` 标签；再次同步更新同一附件，不产生副本。字节未变时跳过写入；文件丢失时恢复。
 - 手机单栏排版，折叠目录，表格和长公式局部横向滚动，深色与打印样式。
-- 文件上传与手机下载沿用 Zotero 现有的 WebDAV 或 Zotero Storage 配置，插件不接触云盘凭据。
+- 文件上传与手机下载沿用 Zotero 现有的 WebDAV 或 Zotero Storage 配置，插件不接触云盘凭据。手机端没有官方 WebDAV 客户端时，推荐使用坚果云官方插件 [zotero-plugin-nutstore](https://github.com/nutstore/zotero-plugin-nutstore) 完成同步。
 
 原插件的「用 EasyRead 阅读」、批量发送和笔记同步能力保留，但执行「同步翻译内容」不会发送或翻译 PDF。
 

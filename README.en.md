@@ -1,13 +1,17 @@
 # EasyRead Sync
 
-An independent Zotero plugin based on [zotero-easyread](https://github.com/apple5089/zotero-easyread). It saves fully translated EasyRead papers as script-free HTML attachments titled `EasyRead翻译` for offline reading inside Zotero, with Android as the mobile target.
+Read translated papers on your phone: this plugin syncs fully translated EasyRead papers as script-free HTML attachments titled `EasyRead翻译`, delivered by Zotero's file sync to Android for offline reading in the official client.
+
+![Reading a translated paper in Zotero for Android](assets/android-reader.png)
+
+Based on [zotero-easyread](https://github.com/apple5089/zotero-easyread); an independent plugin that does not modify the original extension or the EasyRead installer.
 
 ## Features
 
 - Right-click **同步翻译内容** to sync up to 20 selected papers. Only papers with completed full-text translation are exported; incomplete, running or failed jobs are skipped. Translation sync never imports PDFs or starts a model job.
 - Static HTML with translation, KaTeX formulas, tables, figures and references, plus a collapsible TOC and dark/print styles. No runtime scripts, chat, private notes or reading-progress data.
 - The first sync creates one stored attachment tagged `EasyRead`; later syncs update it in place. Unchanged bytes are skipped; missing files are restored.
-- File delivery uses Zotero's existing sync (including WebDAV); no cloud credentials are handled.
+- File delivery uses Zotero's existing sync (including WebDAV); no cloud credentials are handled. For Nutstore (Jianguoyun) users, the official [zotero-plugin-nutstore](https://github.com/nutstore/zotero-plugin-nutstore) plugin is recommended.
 
 The upstream open/import and note-sync operations are retained, but translation sync never sends or translates PDFs.
 
