@@ -1,0 +1,34 @@
+name: Release
+on:
+  push:
+    tags: ["v*"]
+permissions:
+  contents: write
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Verify tag, manifest and update feed agree on the version
+        run: |
+          TAG="${GITHUB_REF_NAME#v}"
+          VERSION=$(python -c "import json;print(json.load(open('zotero/manifest.json'))['version'])")
+          [ "$TAG" = "$VERSION" ] || { echo "Tag $GITHUB_REF_NAME does not match manifest version $VERSION"; exit 1; }
+          grep -q "\"version\": \"$TAG\"" updates.json || { echo "updates.json has no entry for $TAG"; exit 1; }
+      - run: node --test tests/core.test.cjs tests/compat.test.cjs
+      - run: python -m unittest discover -s tests -p "test_*.py" -v
+      - run: python build.py
+      - name: Create release with the XPI
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -e
+          XPI=$(ls dist/easyread-zotero-sync-*.xpi)
+          [ "$(printf '%s\n' $XPI | wc -l)" = 1 ] || { echo "Expected exactly one XPI: $XPI"; exit 1; }
+          gh release create "$GITHUB_REF_NAME" "$XPI" --title "EasyRead Sync $GITHUB_REF_NAME" --generate-notes
