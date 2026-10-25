@@ -1,8 +1,10 @@
 # EasyRead Sync
 
-在手机上阅读论文的中文翻译：插件把 EasyRead 已完成全文翻译的论文同步为 Zotero 的 `EasyRead翻译` 附件，随 Zotero 文件同步进入 Android 手机，在官方客户端内直接离线阅读。
+将 EasyRead 的翻译内容作为单个 HTML 文件同步到 Zotero 中，配合同步功能使得在各个设备中灵活阅读翻译版的论文。
 
-![Android Zotero 内阅读翻译版论文](assets/android-reader.png)
+<img src="assets/android-reader.png" width="280" align="left" alt="Android Zotero 内阅读翻译版论文">
+
+在手机上阅读论文的中文翻译：插件把 EasyRead 已完成全文翻译的论文同步为 Zotero 的 `EasyRead翻译` 附件，随 Zotero 文件同步进入 Android 手机，在官方客户端内直接离线阅读。
 
 本插件基于 [zotero-easyread](https://github.com/apple5089/zotero-easyread) 开发，是独立插件，不修改原插件或 EasyRead 安装程序。
 

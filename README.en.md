@@ -1,8 +1,8 @@
 # EasyRead Sync
 
-Read translated papers on your phone: this plugin syncs fully translated EasyRead papers as script-free HTML attachments titled `EasyRead翻译`, delivered by Zotero's file sync to Android for offline reading in the official client.
+EasyRead keeps paper translations on the computer. To read them offline on a phone, hand them to Zotero: this plugin exports fully translated papers as a single script-free HTML file, stores it as an `EasyRead翻译` attachment, and Zotero's existing file sync delivers it to Android for reading in the official client.
 
-![Reading a translated paper in Zotero for Android](assets/android-reader.png)
+<img src="assets/android-reader.png" width="280" align="left" alt="Reading a translated paper in Zotero for Android">
 
 Based on [zotero-easyread](https://github.com/apple5089/zotero-easyread); an independent plugin that does not modify the original extension or the EasyRead installer.
 
