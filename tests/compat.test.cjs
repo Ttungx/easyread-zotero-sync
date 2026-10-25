@@ -98,11 +98,12 @@ function viewHarness() {
   disk.set(file.path,'%PDF-');
   function attachment(id=100,key='VIEW0001') {
     const item={id,key,parentID:1,libraryID:1,deleted:false,attachmentContentType:'text/html',attachmentLinkMode:0,
-      attachmentFilename:'EasyRead翻译.html',attachmentSyncState:2,tags:new Set(),annotations:[],title:'EasyRead翻译',
+      attachmentSyncState:2,tags:new Set(),annotations:[],title:'EasyRead翻译',
       path:'C:\\Storage\\'+key+'\\EasyRead翻译.html',
+      get attachmentFilename(){return path.win32.basename(this.path);},
       isAttachment:()=>true,getField(){return this.title;},setField(_field,value){this.title=value;},addTag(tag){this.tags.add(tag);},hasTag(tag){return this.tags.has(tag);},
       getAnnotations(){return this.annotations;},async getFilePathAsync(){return this.path;},
-      async relinkAttachmentFile(source){calls.relinks++;disk.set(this.path,disk.get(source));},async saveTx(){calls.saves++;}};
+      async relinkAttachmentFile(source){calls.relinks++;this.path=path.win32.join(path.win32.dirname(this.path),path.win32.basename(source));disk.set(this.path,disk.get(source));},async saveTx(){calls.saves++;}};
     items.set(id,item);return item;
   }
   ctx.IOUtils={exists:async p=>disk.has(p),readUTF8:async p=>{if(!disk.has(p))throw new Error('Missing file');return disk.get(p);},
@@ -112,7 +113,7 @@ function viewHarness() {
   ctx.Zotero.Libraries={get:()=>({editable:true,filesEditable:true})};
   ctx.Zotero.Items={get:id=>items.get(id),getByLibraryAndKeyAsync:async(lib,key)=>[...items.values()].find(i=>i.libraryID===lib&&i.key===key)||null};
   ctx.Zotero.Attachments={LINK_MODE_IMPORTED_FILE:0,importFromFile:async({file:source,title,contentType,parentItemID})=>{
-    calls.imports++;const item=attachment(100+calls.imports,'VIEW000'+calls.imports);item.title=title;item.attachmentContentType=contentType;item.parentID=parentItemID;disk.set(item.path,disk.get(source));return item;
+    calls.imports++;const item=attachment(100+calls.imports,'VIEW000'+calls.imports);item.title=title;item.attachmentContentType=contentType;item.parentID=parentItemID;item.path='C:\\Storage\\'+item.key+'\\'+path.win32.basename(source);disk.set(item.path,disk.get(source));return item;
   }};
   ctx.Zotero.Sync={Storage:{Local:{SYNC_STATE_TO_DOWNLOAD:1,SYNC_STATE_FORCE_DOWNLOAD:4,SYNC_STATE_IN_CONFLICT:5}},Runner:{syncInProgress:false,delayIndefinite:()=>{calls.pauses++;return()=>calls.resumes++;}}};
   owner.alive=true;owner.registry=core.migrateRegistry(null);owner.translationCSS='body{color:black}';
@@ -170,16 +171,40 @@ test('changed content updates same key, keeps a local backup and restores a miss
   assert.equal(b.disk.get('C:\\Profile\\easyread-zotero-sync-backups\\'+key+'.previous.html'),first);
   b.disk.delete(item.path);await b.owner.saveView(b.file,b.mapping,next);assert.equal(b.calls.relinks,2);assert.equal(b.disk.get(item.path),next);
 });
-test('stored HTML filename rejects paths before importing or overwriting',async()=>{
-  const b=viewHarness();await b.owner.saveView(b.file,b.mapping,b.html());
-  const item=[...b.items.values()][0],stored=b.disk.get(item.path);
-  b.payload.reader.edits.p1={zh:'Changed'};
-  for(const name of ['../other.html','C:\\other.html','C:other.html','other.txt']){
-    item.attachmentFilename=name;
-    await assert.rejects(b.owner.saveView(b.file,b.mapping,b.html()),/文件名无效/);
-    assert.equal(b.disk.get(item.path),stored);assert.equal(b.calls.relinks,0);
-    assert.equal(b.calls.pauses,b.calls.resumes);
-  }
+test('translated titles become safe attachment filenames',()=>{
+  const b=bridge();
+  assert.equal(b.owner.translationFileName('测试论文'),'测试论文.html');
+  assert.equal(b.owner.translationFileName('攻击: 防御/与"对策"?'),'攻击 防御与对策.html');
+  assert.equal(b.owner.translationFileName('...'),'EasyRead翻译.html');
+  assert.equal(b.owner.translationFileName(''),'EasyRead翻译.html');
+  assert.equal(b.owner.translationFileName('长'.repeat(150)).length,105);
+});
+test('attachments are titled and named by the translated paper title',async()=>{
+  const b=viewHarness();await b.owner.saveView(b.file,b.mapping,b.html(),{title:'测试论文'});
+  const item=[...b.items.values()][0];
+  assert.equal(item.getField('title'),'测试论文');
+  assert.equal(item.attachmentFilename,'测试论文.html');
+  assert.equal(item.path,'C:\\Storage\\'+item.key+'\\测试论文.html');
+  assert.ok(item.hasTag('EasyRead'));
+  assert.equal(b.calls.imports,1);
+  const again=await b.owner.saveView(b.file,b.mapping,b.html(),{title:'测试论文'});
+  assert.equal(again.changed,false);assert.equal(b.calls.relinks,0);
+});
+test('legacy EasyRead翻译 attachments are renamed without changing content',async()=>{
+  const b=viewHarness();
+  const legacy=b.attachment(100,'VIEW0001');
+  b.disk.set(legacy.path,b.html());
+  const result=await b.owner.saveView(b.file,b.mapping,b.html(),{title:'测试论文'});
+  assert.equal(result.changed,true);assert.equal(b.calls.imports,0);assert.equal(b.calls.relinks,1);
+  assert.equal(legacy.getField('title'),'测试论文');
+  assert.equal(legacy.path,'C:\\Storage\\VIEW0001\\测试论文.html');
+  assert.equal(b.disk.get(legacy.path),b.html());
+  assert.equal(b.disk.has('C:\\Storage\\VIEW0001\\EasyRead翻译.html'),false);
+  assert.equal(b.disk.get('C:\\Profile\\easyread-zotero-sync-backups\\VIEW0001.previous.html'),b.html());
+  assert.equal(legacy.attachmentSyncState,'to_upload');
+  assert.equal(b.calls.resumes,b.calls.pauses);
+  const repeated=await b.owner.saveView(b.file,b.mapping,b.html(),{title:'测试论文'});
+  assert.equal(repeated.changed,false);assert.equal(b.calls.relinks,1);
 });
 
 test('registry loss recovers only a uniquely source-marked attachment',async()=>{
@@ -247,7 +272,7 @@ test('packaged bootstrap registers a native Zotero preferences pane and cleans i
   }};
   vm.runInContext(fs.readFileSync(path.join(__dirname,'../zotero/bootstrap.js'),'utf8'),ctx);
   await ctx.startup({rootURI:'fixture:///'});
-  assert.equal(ctx.ZoteroEasyRead.pluginID,'easyread-zotero-sync@local.research');assert.equal(ctx.ZoteroEasyRead.version,'0.2.1');assert.equal(ctx.katex.version,'0.16.22');
+  assert.equal(ctx.ZoteroEasyRead.pluginID,'easyread-zotero-sync@local.research');assert.equal(ctx.ZoteroEasyRead.version,'0.2.2');assert.equal(ctx.katex.version,'0.16.22');
   assert.equal(registered.length,3);assert.equal(registered[0].pluginID,ctx.ZoteroEasyRead.pluginID);
   const pane=registered.find(entry=>entry.id==='easyread-sync-preferences');
   assert.match(pane.src,/preferences\.xhtml$/);assert.match(pane.scripts[0],/preferences\.js$/);assert.match(pane.stylesheets[0],/preferences\.css$/);

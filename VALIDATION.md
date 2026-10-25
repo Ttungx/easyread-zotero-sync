@@ -14,7 +14,7 @@ python -m unittest discover -s tests -p "test_*.py" -v
 python build.py
 ```
 
-34 Node tests and 5 Python tests passed (version 0.2.1). Coverage: full-translation guards, inert JSON extraction, escaping, deterministic output, attachment create/update/no-op/recovery, permission and annotation protections, registry migration and backup, resource-read failure and retry, filename validation, Preferences logic and packaging.
+36 Node tests and 5 Python tests passed (version 0.2.2). Coverage: full-translation guards, inert JSON extraction, escaping, deterministic output, attachment create/update/no-op/recovery, permission and annotation protections, registry migration and backup, resource-read failure and retry, title-based filename sanitization, Preferences logic and packaging.
 
 ## Native host checks
 
@@ -28,10 +28,14 @@ Each run installs the release XPI (identity metadata adjusted, harness appended)
 
 **Passed on Zotero 10.0.6 (version 0.2.1):**
 
-- 30 synthetic end-to-end assertions: real HTTP discovery/export, packed `jar:` resource loading, native Preferences initialization and saving, attachment creation, same-key in-place updates, unchanged no-ops, backups, missing-file recovery, manual-edit protection, full/zero-page guards, cleanup and stop/restart.
-- 4 assertions against live EasyRead 1.4.4 / API v1 for the 22-page paper *Persistent Billable State: Denial-of-Wallet Attacks and Defenses in Tool-Calling LLM Agents*: source PDF copied over HTTP into the isolated library, initial sync created one attachment, repeat sync skipped the unchanged file. Only GET requests reached the real service.
+- 32 synthetic end-to-end assertions: real HTTP discovery/export, packed `jar:` resource loading, native Preferences initialization and saving, attachment creation with title-based naming, same-key in-place updates, unchanged no-ops, backups, missing-file recovery, manual-edit protection, full/zero-page guards, legacy `EasyRead翻译` renaming, cleanup and stop/restart.
+- 4 assertions against live EasyRead 1.4.4 / API v1 for the 22-page paper *Persistent Billable State: Denial-of-Wallet Attacks and Defenses in Tool-Calling LLM Agents*: source PDF copied over HTTP into the isolated library, initial sync created one attachment titled and named by the translated title (持久计费状态：工具调用 LLM 智能体中的拒绝钱包攻击与防御), repeat sync skipped the unchanged file. Only GET requests reached the real service.
 
 **Offline rendering of the actual stored live attachment** (Chromium, JavaScript disabled, network blocked): 196 blocks, 15 figures, 15 tables, 137 formula instances; zero scripts, broken images, broken anchors, formula errors or remote images; no page overflow at 360/390/768/1280 px in light and dark themes.
+
+## Changes in 0.2.2
+
+Attachments are titled and named by the paper's translated title instead of the fixed `EasyRead翻译` (the `EasyRead` tag remains the marker). Filesystem-unsafe characters are stripped and the basename is capped at 100 characters. Existing `EasyRead翻译` attachments are renamed on the next sync even when their content is unchanged: the rename reuses the same attachment key, keeps content and annotations untouched, backs up the previous file, marks it for re-upload and removes the orphaned old file. Renaming counts as an update in the sync report.
 
 ## Root causes fixed in 0.2.1
 

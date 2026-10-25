@@ -87,7 +87,7 @@ test('inert export parsing ignores scripts and rejects ambiguous/malformed paylo
 });
 test('static translation keeps formulas/tables/images/references and omits originals and private data',()=>{
   const result=reading.render(reading.data());
-  assert.equal(result.images,1);assert.equal(result.tables,1);assert.equal(result.blocks,9);
+  assert.equal(result.images,1);assert.equal(result.tables,1);assert.equal(result.blocks,9);assert.equal(result.title,'测试论文');
   assert.match(result.html,/class="katex"/);assert.match(result.html,/<table>/);assert.match(result.html,/data:image\/png;base64/);
   assert.match(result.html,/href="#ref-1"/);assert.match(result.html,/href="#b-fig1"/);assert.match(result.html,/<summary>目录<\/summary>/);
   assert.doesNotMatch(result.html,/PRIVATE|<script|<button|pr-data|UNTRUSTED|last_opened/);

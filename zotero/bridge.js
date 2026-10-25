@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: MIT */
 var ZoteroEasyRead = {
   pluginID: "easyread-zotero-sync@local.research",
-  version: "0.2.1",
+  version: "0.2.2",
   menus: [],
   preferencePaneID: "easyread-sync-preferences",
   preferenceObservers: [],
@@ -23,6 +23,11 @@ var ZoteroEasyRead = {
     return [...new Set([this.pref("home",this.legacyHome()),PathUtils.join(PathUtils.parent(executable),"data"),this.legacyHome()].filter(Boolean))];
   },
   bridgeDir() { return PathUtils.join(this.home(), "zotero-bridge"); },
+  // The attachment is titled by the paper's translated title, not a fixed name.
+  translationFileName(title) {
+    const base = String(title || "").replace(/[\u0000-\u001f\\/:*?"<>|]/g,"").replace(/\s+/g," ").trim().replace(/[.\s]+$/,"").slice(0,100).replace(/[.\s]+$/,"");
+    return (base || "EasyRead翻译") + ".html";
+  },
   registryPath() { return PathUtils.join(Zotero.Profile.dir, "easyread-zotero-sync.json"); },
   async loadRegistry() {
     const path = this.registryPath(), exists = await IOUtils.exists(path);
@@ -403,7 +408,7 @@ var ZoteroEasyRead = {
           const currentStat = await IOUtils.stat(file.path);
           if (currentStat.size !== file.stat.size || currentStat.lastModified !== file.stat.lastModified) throw new Error("PDF 在同步期间发生变化，请重试。");
           if (!this.alive) throw new Error("插件已停止，任务已取消。");
-          const saved = await this.saveView(file,{id,sha256},rendered.html,{allowPrompt});
+          const saved = await this.saveView(file,{id,sha256},rendered.html,{allowPrompt,title:rendered.title});
           report[saved.changed ? "changed" : "unchanged"]++;
         } catch (error) {
           const skipped = error.code === "INCOMPLETE" || error.code === "PROTECTED";
@@ -418,8 +423,9 @@ var ZoteroEasyRead = {
     this.lastViewSyncReport = report;
     return report;
   },
-  async saveView(file, mapping, html, {allowPrompt = false} = {}) {
+  async saveView(file, mapping, html, {allowPrompt = false, title} = {}) {
     const protect = message => Object.assign(new Error(message),{code:"PROTECTED"});
+    const desiredTitle = String(title || "").trim() || "EasyRead翻译";
     if (!file.parent || file.parent.deleted) throw new Error("翻译附件必须属于有效的文献条目。");
     const library = Zotero.Libraries.get(file.libraryID);
     if (!library?.editable || !library.filesEditable) throw new Error("该文献库没有附件写入权限。");
@@ -471,8 +477,11 @@ var ZoteroEasyRead = {
       }
     };
     if (attachment && currentHash === digest) {
-      if (record?.attachmentKey !== attachment.key || record.sourceHash !== digest || !this.registry.attachments[file.mapKey]) await remember();
-      return {changed:false,attachmentKey:attachment.key};
+      // Previously synced attachments keep the fixed EasyRead翻译 name; fall through to rename them.
+      if (attachment.attachmentFilename === this.translationFileName(desiredTitle) && attachment.getField("title") === desiredTitle) {
+        if (record?.attachmentKey !== attachment.key || record.sourceHash !== digest || !this.registry.attachments[file.mapKey]) await remember();
+        return {changed:false,attachmentKey:attachment.key};
+      }
     }
     if (attachment) {
       const storage = Zotero.Sync.Storage.Local;
@@ -491,8 +500,8 @@ var ZoteroEasyRead = {
       if (!this.alive) throw new Error("插件已停止，任务已取消。");
       temporary = PathUtils.join(Zotero.getTempDirectory().path,"easyread-sync-" + Services.uuid.generateUUID().toString().replace(/[{}-]/g,""));
       await IOUtils.makeDirectory(temporary);
-      const name = attachment?.attachmentFilename || "EasyRead翻译.html";
-      if (/[\\/:]/.test(name) || !/\.html?$/i.test(name)) throw protect("现有译文文件名无效，未覆写。");
+      const name = this.translationFileName(desiredTitle);
+      if (/[\\/:]/.test(name) || !/\.html?$/i.test(name)) throw protect("译文文件名无效，未覆写。");
       const tempPath = PathUtils.join(temporary,name);
       await IOUtils.writeUTF8(tempPath,html);
       if (exists) {
@@ -503,11 +512,15 @@ var ZoteroEasyRead = {
       }
       if (!this.alive) throw new Error("插件已停止，任务已取消。");
       if (attachment) await attachment.relinkAttachmentFile(tempPath);
-      else attachment = await Zotero.Attachments.importFromFile({file:tempPath,parentItemID:file.parent.id,title:"EasyRead翻译",contentType:"text/html",charset:"utf-8"});
-      attachment.setField("title","EasyRead翻译");
+      else attachment = await Zotero.Attachments.importFromFile({file:tempPath,parentItemID:file.parent.id,title:desiredTitle,contentType:"text/html",charset:"utf-8"});
+      attachment.setField("title",desiredTitle);
       attachment.addTag("EasyRead");
       attachment.attachmentSyncState = "to_upload";
       await attachment.saveTx();
+      // Renaming leaves the previous EasyRead翻译.html unreferenced in storage.
+      if (path && path !== await attachment.getFilePathAsync() && await IOUtils.exists(path)) {
+        try { await IOUtils.remove(path); } catch (error) { Zotero.logError(error); }
+      }
       await remember();
       return {changed:true,attachmentKey:attachment.key};
     } finally {

@@ -148,7 +148,7 @@ var EasyReadTranslation = {
       + `<meta name="easyread-format" content="${this.format}"><meta name="easyread-source-sha256" content="${paper.meta.source_sha256}">`
       + `<meta name="color-scheme" content="light dark"><title>${e(title)}</title><style>${css}</style></head><body><main id="paper">${body}</main></body></html>`;
     if (new TextEncoder().encode(html).byteLength > this.maxBytes) throw new Error("译文附件超过 32 MB，暂不同步，请先检查插图体积。");
-    return {html,images,tables,blocks:blocks.filter(b => b.type !== "note").length};
+    return {html,images,tables,title,blocks:blocks.filter(b => b.type !== "note").length};
   }
 };
 if (typeof module !== "undefined") module.exports = EasyReadTranslation;

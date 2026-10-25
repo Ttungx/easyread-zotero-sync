@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "EasyRead Sync",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "将 EasyRead 已完成的全文译文同步为 Zotero 内可离线阅读的 HTML 附件。",
   "author": "apple5089",
   "applications": {"zotero": {

@@ -74,8 +74,8 @@ async function runNativeTests() {
     const mapKey = `${file.libraryID}:${article.key}:${sha256}`;
     const record = owner.registry.views[mapKey];
     const item = await Zotero.Items.getByLibraryAndKeyAsync(file.libraryID,record.attachmentKey);
-    check("stored attachment has fixed title, MIME and tag",item.attachmentLinkMode === Zotero.Attachments.LINK_MODE_IMPORTED_FILE && item.attachmentContentType === "text/html" && item.getField("title") === "EasyRead翻译" && item.hasTag("EasyRead"));
     const storedPath = await item.getFilePathAsync(), oldHTML = await IOUtils.readUTF8(storedPath);
+    check("stored attachment is titled and named by the translated paper title",item.attachmentLinkMode === Zotero.Attachments.LINK_MODE_IMPORTED_FILE && item.attachmentContentType === "text/html" && item.getField("title") === payload.paper.meta.title_zh && item.hasTag("EasyRead") && storedPath.endsWith(payload.paper.meta.title_zh + ".html"));
     report.attachmentPath = storedPath;
     check("complete HTML, embedded image and math exist without scripts",oldHTML.includes('class="katex"') && oldHTML.includes("data:image/png;base64") && !oldHTML.includes("<script"));
     check("private data and originals excluded",!oldHTML.includes("PRIVATE"));
@@ -98,6 +98,18 @@ async function runNativeTests() {
     await IOUtils.writeUTF8(storedPath,current);
     await IOUtils.remove(storedPath);
     check("missing file restored with same attachment key",(await owner.syncSelectedViews([article])).changed === 1 && await IOUtils.readUTF8(await item.getFilePathAsync()) === current && owner.registry.views[mapKey].attachmentKey === item.key);
+    const currentHTML = await IOUtils.readUTF8(storedPath);
+    const legacyArticle = new Zotero.Item("journalArticle"); legacyArticle.setField("title","EasyRead Sync legacy rename test"); await legacyArticle.saveTx();
+    await Zotero.Attachments.importFromFile({file:PathUtils.join(TEST_ROOT,"fixtures","source.pdf"),parentItemID:legacyArticle.id});
+    const legacyDir = PathUtils.join(TEST_ROOT,"legacy"); await IOUtils.makeDirectory(legacyDir,{ignoreExisting:true});
+    const legacyFile = PathUtils.join(legacyDir,"EasyRead翻译.html");
+    await IOUtils.writeUTF8(legacyFile,currentHTML);
+    const legacyAttachment = await Zotero.Attachments.importFromFile({file:legacyFile,parentItemID:legacyArticle.id,title:"EasyRead翻译",contentType:"text/html",charset:"utf-8"});
+    legacyAttachment.addTag("EasyRead"); await legacyAttachment.saveTx();
+    const legacyKey = legacyAttachment.key, legacyStored = await legacyAttachment.getFilePathAsync();
+    const legacySync = await owner.syncSelectedViews([legacyArticle],null,true);
+    check("legacy EasyRead翻译 attachment is renamed to the translated title on the next sync",legacySync.changed === 1 && legacySync.failed === 0 && legacyAttachment.key === legacyKey && legacyAttachment.getField("title") === payload.paper.meta.title_zh && !(await IOUtils.exists(legacyStored)) && (await legacyAttachment.getFilePathAsync()).endsWith(payload.paper.meta.title_zh + ".html"));
+    check("renamed legacy attachment keeps identical content and does not duplicate",await IOUtils.readUTF8(await legacyAttachment.getFilePathAsync()) === currentHTML && legacyArticle.getAttachments().map(id=>Zotero.Items.get(id)).filter(a=>a.attachmentContentType === "text/html").length === 1);
     for (const pages of [[1],[]]) {
       payload.paper.translation.done_pages = pages;
       await savePayload(payload);

@@ -1,6 +1,6 @@
 # EasyRead Sync
 
-Sync fully translated EasyRead papers as `EasyRead翻译` Zotero attachments and read the translations offline on your phone.
+Sync fully translated EasyRead papers as Zotero attachments named by the translated title, and read them offline on your phone.
 
 <img src="assets/android-reader.png" width="280" align="left" alt="Reading a translated paper in Zotero for Android">
 
@@ -10,7 +10,7 @@ An independent plugin based on [zotero-easyread](https://github.com/apple5089/zo
 
 - Right-click **同步翻译内容** to sync up to 20 papers at once; only fully translated papers are exported, never re-translated.
 - Attachments are script-free static HTML: translation, KaTeX formulas, tables, figures, references; no chat or annotation data.
-- Updates reuse the same attachment — no duplicates; unchanged bytes are skipped, missing files restored.
+- Updates reuse the same attachment — no duplicates; unchanged bytes are skipped, missing files restored. Existing `EasyRead翻译` attachments are renamed automatically on the next sync.
 - Mobile single-column layout, collapsible TOC, scrollable tables and formulas, dark mode.
 - Delivery uses Zotero's existing WebDAV / Zotero Storage; the official [Nutstore plugin](https://github.com/nutstore/zotero-plugin-nutstore) is recommended on mobile.
 
@@ -21,7 +21,7 @@ The upstream open/import and note-sync operations are retained; translation sync
 Requires Zotero 10.0.x and a running EasyRead service (export baseline: 1.4.3 / API v1). The PDF must be downloaded in Zotero.
 
 1. Download the XPI from [Releases](https://github.com/Ttungx/easyread-zotero-sync/releases) or build with `python build.py`.
-2. Install it in Zotero's Add-ons manager; upgrading from 0.2.0 needs no cleanup.
+2. Install it in Zotero's Add-ons manager; upgrading from older versions needs no cleanup — existing attachments are renamed on the next sync.
 3. Finish the full-text translation in EasyRead.
 4. Run the translation-sync command in Zotero; matching is by PDF fingerprint.
 5. After desktop sync finishes, download the attachment on Android.

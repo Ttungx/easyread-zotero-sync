@@ -1,6 +1,6 @@
 # EasyRead Sync
 
-将 EasyRead 已完成全文翻译的论文同步为 Zotero 的 `EasyRead翻译` 附件，在手机上离线阅读翻译版。
+将 EasyRead 已完成全文翻译的论文同步为以译文标题命名的 Zotero 附件，在手机上离线阅读翻译版。
 
 <img src="assets/android-reader.png" width="280" align="left" alt="Android Zotero 内阅读翻译版论文">
 
@@ -10,7 +10,7 @@
 
 - 右键 **同步翻译内容**，可多选（每批 20 篇）；只同步已完成全文翻译的论文，不自动补译。
 - 附件为无脚本静态 HTML：译文、公式（KaTeX）、表格、插图、参考文献，不含聊天与批注数据。
-- 原地更新同一附件，不产生副本；字节未变跳过写入，文件丢失自动恢复。
+- 原地更新同一附件，不产生副本；字节未变跳过写入，文件丢失自动恢复。旧版 `EasyRead翻译` 附件在下次同步时自动改名为译文标题。
 - 手机单栏排版、折叠目录、表格与长公式局部滚动、深色模式。
 - 同步沿用 Zotero 现有的 WebDAV / Zotero Storage；WebDAV 推荐使用 [坚果云官方插件](https://github.com/nutstore/zotero-plugin-nutstore)。
 
@@ -21,7 +21,7 @@
 前置条件：Zotero 10.0.x、EasyRead 本地服务可访问（导出适配基线为 1.4.3 / API v1）、PDF 已下载到 Zotero。
 
 1. 从 [Releases](https://github.com/Ttungx/easyread-zotero-sync/releases) 下载 XPI，或运行 `python build.py` 构建。
-2. 在 Zotero 插件管理页安装；从 0.2.0 升级直接覆盖。
+2. 在 Zotero 插件管理页安装；从旧版本升级直接覆盖，已有附件在下次同步时自动改名。
 3. 在 EasyRead 完成论文全文翻译。
 4. 在 Zotero 执行「同步翻译内容」，插件按 PDF 指纹自动匹配。
 5. 电脑端同步完成后，在 Android Zotero 下载附件离线阅读。
