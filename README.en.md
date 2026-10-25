@@ -1,28 +1,30 @@
 # EasyRead Sync
 
-EasyRead keeps paper translations on the computer. To read them offline on a phone, hand them to Zotero: this plugin exports fully translated papers as a single script-free HTML file, stores it as an `EasyRead翻译` attachment, and Zotero's existing file sync delivers it to Android for reading in the official client.
+Sync fully translated EasyRead papers as `EasyRead翻译` Zotero attachments and read the translations offline on your phone.
 
 <img src="assets/android-reader.png" width="280" align="left" alt="Reading a translated paper in Zotero for Android">
 
-Based on [zotero-easyread](https://github.com/apple5089/zotero-easyread); an independent plugin that does not modify the original extension or the EasyRead installer.
+An independent plugin based on [zotero-easyread](https://github.com/apple5089/zotero-easyread); it does not modify the original extension or the EasyRead installer.
 
 ## Features
 
-- Right-click **同步翻译内容** to sync up to 20 selected papers. Only papers with completed full-text translation are exported; incomplete, running or failed jobs are skipped. Translation sync never imports PDFs or starts a model job.
-- Static HTML with translation, KaTeX formulas, tables, figures and references, plus a collapsible TOC and dark/print styles. No runtime scripts, chat, private notes or reading-progress data.
-- The first sync creates one stored attachment tagged `EasyRead`; later syncs update it in place. Unchanged bytes are skipped; missing files are restored.
-- File delivery uses Zotero's existing sync (including WebDAV); no cloud credentials are handled. For Nutstore (Jianguoyun) users, the official [zotero-plugin-nutstore](https://github.com/nutstore/zotero-plugin-nutstore) plugin is recommended.
+- Right-click **同步翻译内容** to sync up to 20 papers at once; only fully translated papers are exported, never re-translated.
+- Attachments are script-free static HTML: translation, KaTeX formulas, tables, figures, references; no chat or annotation data.
+- Updates reuse the same attachment — no duplicates; unchanged bytes are skipped, missing files restored.
+- Mobile single-column layout, collapsible TOC, scrollable tables and formulas, dark mode.
+- Delivery uses Zotero's existing WebDAV / Zotero Storage; the official [Nutstore plugin](https://github.com/nutstore/zotero-plugin-nutstore) is recommended on mobile.
 
-The upstream open/import and note-sync operations are retained, but translation sync never sends or translates PDFs.
+The upstream open/import and note-sync operations are retained; translation sync never sends or translates PDFs.
 
 ## Install
 
 Requires Zotero 10.0.x and a running EasyRead service (export baseline: 1.4.3 / API v1). The PDF must be downloaded in Zotero.
 
-1. Run `python build.py` to get `dist/easyread-zotero-sync-0.2.1.xpi`.
-2. Install the XPI through Zotero's Add-ons manager. Upgrading from 0.2.0 needs no cleanup.
-3. Finish the full-text translation in EasyRead, then run the translation-sync command on the item. Matching uses the PDF's full SHA-256 fingerprint.
-4. After desktop file sync finishes, sync and download the attachment on Android.
+1. Download the XPI from [Releases](https://github.com/Ttungx/easyread-zotero-sync/releases) or build with `python build.py`.
+2. Install it in Zotero's Add-ons manager; upgrading from 0.2.0 needs no cleanup.
+3. Finish the full-text translation in EasyRead.
+4. Run the translation-sync command in Zotero; matching is by PDF fingerprint.
+5. After desktop sync finishes, download the attachment on Android.
 
 This is a candidate build: isolated-host and live-paper rendering checks passed; real-library use and physical Android remain acceptance gates. See [VALIDATION.md](VALIDATION.md).
 
@@ -34,9 +36,9 @@ The plugin reuses the original plugin's configured directory and executable path
 
 **Updating text may invalidate existing Zotero highlight positions on the HTML attachment.** Annotations are never deleted or repositioned automatically.
 
-- Annotated or manually edited attachments are skipped in batch sync; single-item sync asks for confirmation.
-- One previous HTML copy is kept locally under `easyread-zotero-sync-backups/` before each overwrite.
-- Attachments pending download, in conflict, or during an active Zotero sync are never overwritten.
+- Annotated or manually edited attachments are never overwritten silently: batch skips, single-item asks.
+- One previous HTML copy is kept under `easyread-zotero-sync-backups/` before each overwrite.
+- No overwrite during sync conflicts, pending downloads or an active Zotero sync.
 
 The plugin has its own ID, preferences, protocol and `easyread-zotero-sync.json` registry; the original extension's data is untouched. Uninstalling does not delete imported attachments. The update feed is `updates.json` at the repository root.
 
