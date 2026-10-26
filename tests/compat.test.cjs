@@ -286,7 +286,7 @@ test('packaged bootstrap registers a native Zotero preferences pane and cleans i
   }};
   vm.runInContext(fs.readFileSync(path.join(__dirname,'../zotero/bootstrap.js'),'utf8'),ctx);
   await ctx.startup({rootURI:'fixture:///'});
-  assert.equal(ctx.ZoteroEasyRead.pluginID,'easyread-zotero-sync@local.research');assert.equal(ctx.ZoteroEasyRead.version,'0.2.3');assert.equal(ctx.katex.version,'0.16.22');
+  assert.equal(ctx.ZoteroEasyRead.pluginID,'easyread-zotero-sync@local.research');assert.equal(ctx.ZoteroEasyRead.version,'0.2.4');assert.equal(ctx.katex.version,'0.16.22');
   assert.equal(registered.length,3);assert.equal(registered[0].pluginID,ctx.ZoteroEasyRead.pluginID);
   const pane=registered.find(entry=>entry.id==='easyread-sync-preferences');
   assert.match(pane.src,/preferences\.xhtml$/);assert.match(pane.scripts[0],/preferences\.js$/);assert.match(pane.stylesheets[0],/preferences\.css$/);

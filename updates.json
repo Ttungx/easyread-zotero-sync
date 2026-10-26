@@ -3,6 +3,10 @@
     "easyread-zotero-sync@local.research": {
       "updates": [
         {
+          "version": "0.2.4",
+          "update_link": "https://github.com/Ttungx/easyread-zotero-sync/releases/download/v0.2.4/easyread-zotero-sync-0.2.4.xpi"
+        },
+        {
           "version": "0.2.3",
           "update_link": "https://github.com/Ttungx/easyread-zotero-sync/releases/download/v0.2.3/easyread-zotero-sync-0.2.3.xpi"
         },

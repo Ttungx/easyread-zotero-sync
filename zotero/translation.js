@@ -129,11 +129,18 @@ var EasyReadTranslation = {
           break;
         }
         case "figure": {
-          const src = Object.hasOwn(data.images,b.src) ? data.images[b.src] : null;
-          if (typeof src !== "string" || !/^data:image\/(?:webp|png|jpeg);base64,[A-Za-z0-9+/]+=*$/.test(src)) throw new Error(`插图 ${b.id} 缺失或不是内嵌图片，原附件未修改。`);
-          images++;
+          const hasSrc = typeof b.src === "string" && b.src.trim().length > 0;
+          let media;
+          if (hasSrc) {
+            const src = Object.hasOwn(data.images,b.src) ? data.images[b.src] : null;
+            if (typeof src !== "string" || !/^data:image\/(?:webp|png|jpeg);base64,[A-Za-z0-9+/]+=*$/.test(src)) throw new Error(`插图 ${b.id} 缺失或不是内嵌图片，原附件未修改。`);
+            images++;
+            media = `<img src="${src}" alt="${e(b.caption_zh || "论文插图")}" loading="eager">`;
+          } else {
+            media = `<div class="figure-missing">图见原 PDF 第 ${e(b.page || "？")} 页</div>`;
+          }
           const imageText = text(b.id + "#image",b.image_zh,b.image_en);
-          content = `<figure><img src="${src}" alt="${e(b.caption_zh || "论文插图")}" loading="eager">`
+          content = `<figure>${media}`
             + (imageText ? `<div class="figure-text"><span>图内文字</span>${md(imageText)}</div>` : "") + caption(b) + "</figure>";
           break;
         }

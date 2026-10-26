@@ -15,12 +15,12 @@ class BuildTests(unittest.TestCase):
     def test_packages_are_independent_and_contain_only_distribution_inputs(self):
         with tempfile.TemporaryDirectory() as tmp:
             xpi, source = builder.build(tmp)
-            self.assertEqual(xpi.name, "easyread-zotero-sync-0.2.3.xpi")
+            self.assertEqual(xpi.name, "easyread-zotero-sync-0.2.4.xpi")
             with zipfile.ZipFile(xpi) as package:
                 names = package.namelist()
                 manifest = json.loads(package.read("manifest.json"))
                 self.assertEqual(manifest["applications"]["zotero"]["id"], "easyread-zotero-sync@local.research")
-                self.assertEqual(manifest["version"], "0.2.3")
+                self.assertEqual(manifest["version"], "0.2.4")
                 self.assertEqual(manifest["applications"]["zotero"]["update_url"], "https://raw.githubusercontent.com/Ttungx/easyread-zotero-sync/main/updates.json")
                 self.assertEqual(manifest["applications"]["zotero"]["strict_min_version"], "10.0")
                 self.assertEqual(manifest["applications"]["zotero"]["strict_max_version"], "10.0.*")

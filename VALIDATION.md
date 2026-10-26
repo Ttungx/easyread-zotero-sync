@@ -14,7 +14,7 @@ python -m unittest discover -s tests -p "test_*.py" -v
 python build.py
 ```
 
-37 Node tests and 5 Python tests passed (version 0.2.3). Coverage: full-translation guards, inert JSON extraction, escaping, deterministic output, attachment create/update/no-op/recovery, permission and annotation protections, registry migration and backup, resource-read failure and retry, title-based filename sanitization, Preferences logic and packaging.
+38 Node tests and 5 Python tests passed (version 0.2.4). Coverage: full-translation guards, inert JSON extraction, escaping, deterministic output, attachment create/update/no-op/recovery, permission and annotation protections, registry migration and backup, resource-read failure and retry, title-based filename sanitization, Preferences logic and packaging.
 
 ## Native host checks
 
@@ -32,6 +32,10 @@ Each run installs the release XPI (identity metadata adjusted, harness appended)
 - 4 assertions against live EasyRead 1.4.4 / API v1 for the 22-page paper *Persistent Billable State: Denial-of-Wallet Attacks and Defenses in Tool-Calling LLM Agents*: source PDF copied over HTTP into the isolated library, initial sync created one attachment titled and named by the translated title (持久计费状态：工具调用 LLM 智能体中的拒绝钱包攻击与防御), repeat sync skipped the unchanged file. Only GET requests reached the real service.
 
 **Offline rendering of the actual stored live attachment** (Chromium, JavaScript disabled, network blocked): 196 blocks, 15 figures, 15 tables, 137 formula instances; zero scripts, broken images, broken anchors, formula errors or remote images; no page overflow at 360/390/768/1280 px in light and dark themes.
+
+## Changes in 0.2.4
+
+When EasyRead's paper parser produces a figure block with an empty image crop (`src: ""`, e.g. AnomalyGen Fig. 10 where multi-panel figures share one crop on page 18), the plugin now renders a clean placeholder (`图见原 PDF 第 X 页`) with the translated caption instead of throwing an error. Non-empty crops still undergo strict embedded-image verification.
 
 ## Changes in 0.2.3
 

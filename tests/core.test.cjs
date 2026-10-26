@@ -118,3 +118,10 @@ test('invalid table shapes and unsupported block types do not silently lose cont
   const d=reading.data();d.paper.blocks.find(b=>b.type==='table').rows='broken';assert.throws(()=>reading.render(d),/表格/);
   d.paper.blocks.find(b=>b.type==='table').rows=[['safe']];d.paper.blocks[2].type='unsupported';assert.throws(()=>reading.render(d),/不支持/);
 });
+test('figure blocks without cropped image fall back to page placeholder without stopping export',()=>{
+  const d=reading.data();
+  d.paper.blocks.push({id:'fig-nocrop',type:'figure',page:18,num:'10',src:'',caption_zh:'图 10：无切图测试'});
+  const result=reading.render(d);
+  assert.match(result.html,/class="figure-missing">图见原 PDF 第 18 页<\/div>/);
+  assert.match(result.html,/无切图测试/);
+});

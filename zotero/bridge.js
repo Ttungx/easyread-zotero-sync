@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: MIT */
 var ZoteroEasyRead = {
   pluginID: "easyread-zotero-sync@local.research",
-  version: "0.2.3",
+  version: "0.2.4",
   menus: [],
   preferencePaneID: "easyread-sync-preferences",
   preferenceObservers: [],

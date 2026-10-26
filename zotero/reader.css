@@ -38,6 +38,7 @@ figure { margin: 1.5em 0; }
 img { display: block; max-width: 100%; height: auto; margin: 0 auto; }
 figcaption { font-size: .86em; line-height: 1.7; color: var(--muted); margin: .8em auto; text-align: center; }
 .figure-text { margin: .8em 0; padding: .6em .8em; font-size: .86em; line-height: 1.7; border-left: 2px solid var(--accent); background: var(--soft); }
+.figure-missing { padding: 1.2em; margin: .5em 0; text-align: center; border: 1px dashed var(--rule); border-radius: 6px; color: var(--muted); font-size: .86em; }
 .figure-text > span { display: block; font: .8em/1.6 system-ui, sans-serif; color: var(--accent); }
 .table-scroll { max-width: 100%; overflow-x: auto; overscroll-behavior-x: contain; scrollbar-width: thin; }
 table { border-collapse: collapse; margin: .5em auto; border-top: 1.5px solid var(--ink); border-bottom: 1.5px solid var(--ink); font-size: .86em; line-height: 1.5; font-variant-numeric: tabular-nums; }
