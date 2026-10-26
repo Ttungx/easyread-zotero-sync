@@ -75,6 +75,7 @@ async function runNativeTests() {
     const record = owner.registry.views[mapKey];
     const item = await Zotero.Items.getByLibraryAndKeyAsync(file.libraryID,record.attachmentKey);
     const storedPath = await item.getFilePathAsync(), oldHTML = await IOUtils.readUTF8(storedPath);
+    check("parent item is tagged for library filtering",article.hasTag("EasyRead翻译") && !item.hasTag("EasyRead翻译"));
     check("stored attachment is titled and named by the translated paper title",item.attachmentLinkMode === Zotero.Attachments.LINK_MODE_IMPORTED_FILE && item.attachmentContentType === "text/html" && item.getField("title") === payload.paper.meta.title_zh && item.hasTag("EasyRead") && storedPath.endsWith(payload.paper.meta.title_zh + ".html"));
     report.attachmentPath = storedPath;
     check("complete HTML, embedded image and math exist without scripts",oldHTML.includes('class="katex"') && oldHTML.includes("data:image/png;base64") && !oldHTML.includes("<script"));

@@ -11,6 +11,7 @@ An independent plugin based on [zotero-easyread](https://github.com/apple5089/zo
 - Right-click **同步翻译内容** to sync up to 20 papers at once; only fully translated papers are exported, never re-translated.
 - Attachments are script-free static HTML: translation, KaTeX formulas, tables, figures, references; no chat or annotation data.
 - Updates reuse the same attachment — no duplicates; unchanged bytes are skipped, missing files restored. Existing `EasyRead翻译` attachments are renamed automatically on the next sync.
+- Synced papers are tagged `EasyRead翻译` for library filtering.
 - Mobile single-column layout, collapsible TOC, scrollable tables and formulas, dark mode.
 - Delivery uses Zotero's existing WebDAV / Zotero Storage; the official [Nutstore plugin](https://github.com/nutstore/zotero-plugin-nutstore) is recommended on mobile.
 

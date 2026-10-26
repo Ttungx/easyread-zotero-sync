@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: MIT */
 var ZoteroEasyRead = {
   pluginID: "easyread-zotero-sync@local.research",
-  version: "0.2.2",
+  version: "0.2.3",
   menus: [],
   preferencePaneID: "easyread-sync-preferences",
   preferenceObservers: [],
@@ -24,6 +24,13 @@ var ZoteroEasyRead = {
   },
   bridgeDir() { return PathUtils.join(this.home(), "zotero-bridge"); },
   // The attachment is titled by the paper's translated title, not a fixed name.
+  // The paper item gets a filterable tag; the attachment keeps the EasyRead marker.
+  async tagParent(parent) {
+    if (parent?.hasTag && !parent.hasTag("EasyRead翻译")) {
+      parent.addTag("EasyRead翻译");
+      await parent.saveTx();
+    }
+  },
   translationFileName(title) {
     const base = String(title || "").replace(/[\u0000-\u001f\\/:*?"<>|]/g,"").replace(/\s+/g," ").trim().replace(/[.\s]+$/,"").slice(0,100).replace(/[.\s]+$/,"");
     return (base || "EasyRead翻译") + ".html";
@@ -480,6 +487,7 @@ var ZoteroEasyRead = {
       // Previously synced attachments keep the fixed EasyRead翻译 name; fall through to rename them.
       if (attachment.attachmentFilename === this.translationFileName(desiredTitle) && attachment.getField("title") === desiredTitle) {
         if (record?.attachmentKey !== attachment.key || record.sourceHash !== digest || !this.registry.attachments[file.mapKey]) await remember();
+        await this.tagParent(file.parent);
         return {changed:false,attachmentKey:attachment.key};
       }
     }
@@ -522,6 +530,7 @@ var ZoteroEasyRead = {
         try { await IOUtils.remove(path); } catch (error) { Zotero.logError(error); }
       }
       await remember();
+      await this.tagParent(file.parent);
       return {changed:true,attachmentKey:attachment.key};
     } finally {
       try { if (temporary) await IOUtils.remove(temporary,{recursive:true,ignoreAbsent:true}); }

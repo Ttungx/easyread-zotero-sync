@@ -88,12 +88,13 @@ test('batch import focuses native application without opening a browser tab',asy
 
 const crypto=require('node:crypto'),reading=require('./reading-fixture.cjs');
 function viewHarness() {
-  const b=bridge(),disk=new Map(),items=new Map(),calls={imports:0,relinks:0,saves:0,resumes:0,pauses:0,writes:0,exports:0};
+  const b=bridge(),disk=new Map(),items=new Map(),calls={imports:0,relinks:0,saves:0,resumes:0,pauses:0,writes:0,exports:0,parentSaves:0};
   const owner=b.owner,ctx=b.ctx,sha='a'.repeat(64),payload=reading.data(sha),job={state:'done',failed:{}};
   ctx.EasyReadTranslation=reading.translation;ctx.EasyReadMarkup=reading.markup();
   ctx.PathUtils.filename=value=>{if(!path.win32.isAbsolute(value))throw new Error('PathUtils requires an absolute path');return path.win32.basename(value);};
   ctx.Services.uuid={generateUUID:()=>({toString:()=>'{00000000-0000-0000-0000-000000000001}'})};
-  const parent={id:1,key:'PARENT01',getAttachments:()=>[...items.keys()],getField:()=> 'Fixture'};
+  const parent={id:1,key:'PARENT01',tags:new Set(),getAttachments:()=>[...items.keys()],getField:()=> 'Fixture',
+    addTag(tag){this.tags.add(tag);},hasTag(tag){return this.tags.has(tag);},async saveTx(){calls.parentSaves++;}};
   const file={parent,libraryID:1,mapKey:'1:PDF00001',attachmentKey:'PDF00001',title:'Fixture',path:'C:\\Fixture\\source.pdf',stat:{size:5,lastModified:1}};
   disk.set(file.path,'%PDF-');
   function attachment(id=100,key='VIEW0001') {
@@ -190,6 +191,19 @@ test('attachments are titled and named by the translated paper title',async()=>{
   const again=await b.owner.saveView(b.file,b.mapping,b.html(),{title:'测试论文'});
   assert.equal(again.changed,false);assert.equal(b.calls.relinks,0);
 });
+test('synced papers are tagged for library filtering',async()=>{
+  const b=viewHarness();
+  await b.owner.saveView(b.file,b.mapping,b.html(),{title:'测试论文'});
+  assert.equal(b.file.parent.hasTag('EasyRead翻译'),true);
+  assert.equal(b.calls.parentSaves,1);
+  await b.owner.saveView(b.file,b.mapping,b.html(),{title:'测试论文'});
+  assert.equal(b.calls.parentSaves,1);
+  b.file.parent.tags.delete('EasyRead翻译');
+  await b.owner.saveView(b.file,b.mapping,b.html(),{title:'测试论文'});
+  assert.equal(b.file.parent.hasTag('EasyRead翻译'),true);
+  assert.equal(b.calls.parentSaves,2);
+});
+
 test('legacy EasyRead翻译 attachments are renamed without changing content',async()=>{
   const b=viewHarness();
   const legacy=b.attachment(100,'VIEW0001');
@@ -272,7 +286,7 @@ test('packaged bootstrap registers a native Zotero preferences pane and cleans i
   }};
   vm.runInContext(fs.readFileSync(path.join(__dirname,'../zotero/bootstrap.js'),'utf8'),ctx);
   await ctx.startup({rootURI:'fixture:///'});
-  assert.equal(ctx.ZoteroEasyRead.pluginID,'easyread-zotero-sync@local.research');assert.equal(ctx.ZoteroEasyRead.version,'0.2.2');assert.equal(ctx.katex.version,'0.16.22');
+  assert.equal(ctx.ZoteroEasyRead.pluginID,'easyread-zotero-sync@local.research');assert.equal(ctx.ZoteroEasyRead.version,'0.2.3');assert.equal(ctx.katex.version,'0.16.22');
   assert.equal(registered.length,3);assert.equal(registered[0].pluginID,ctx.ZoteroEasyRead.pluginID);
   const pane=registered.find(entry=>entry.id==='easyread-sync-preferences');
   assert.match(pane.src,/preferences\.xhtml$/);assert.match(pane.scripts[0],/preferences\.js$/);assert.match(pane.stylesheets[0],/preferences\.css$/);
